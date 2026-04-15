@@ -1,0 +1,48 @@
+{
+  "_comment": "Copy this to connections.json and substitute CHANGE_ME values. Do NOT commit the real connections.json — it's in .gitignore.",
+  "amqp": {
+    "host": "127.0.0.1:5672",
+    "api": "127.0.0.1:15672",
+    "protocol": "http",
+    "user": "CHANGE_ME",
+    "pass": "CHANGE_ME",
+    "vhost": "hyperion",
+    "frameMax": "0x10000"
+  },
+  "elasticsearch": {
+    "protocol": "http",
+    "host": "127.0.0.1:9200",
+    "ingest_nodes": ["127.0.0.1:9200"],
+    "user": "",
+    "pass": ""
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379
+  },
+  "mongodb": {
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": 27017,
+    "database_prefix": "hyperion",
+    "user": "",
+    "pass": ""
+  },
+  "chains": {
+    "alpine": {
+      "name": "A-Chain Alpine",
+      "chain_id": "0d6f033e887fae475d641104b6e87762b6c869e87a101afeeb64d608ab376618",
+      "http": "http://127.0.0.1:9650/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc",
+      "ship": [
+        {"label": "primary", "url": "ws://127.0.0.1:9090"}
+      ],
+      "WS_ROUTER_HOST": "127.0.0.1",
+      "WS_ROUTER_PORT": 7001,
+      "control_port": 7002
+    }
+  },
+  "alerts": {
+    "triggers": {},
+    "providers": {}
+  }
+}

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-Chain Alpine — operator endpoint</title>
+  <style>
+    :root {
+      --bg: #0e1014;
+      --panel: #161922;
+      --panel-2: #1d212c;
+      --border: #2a2f3d;
+      --text: #e6e8ee;
+      --muted: #9aa1b1;
+      --accent: #7cdcfe;
+      --ok: #5fd07f;
+      --warn: #f5c451;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+    main { max-width: 980px; margin: 0 auto; padding: 36px 24px 80px; }
+    h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: -0.01em; }
+    h2 { margin: 36px 0 12px; font-size: 18px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    h3 { margin: 20px 0 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    p, li { color: var(--text); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .lede { color: var(--muted); margin: 0 0 24px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 18px; margin: 12px 0;
+    }
+    .pill {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+      background: var(--panel-2); color: var(--muted); border: 1px solid var(--border);
+    }
+    .pill.ok { color: var(--ok); border-color: rgba(95,208,127,0.3); }
+    .pill.warn { color: var(--warn); border-color: rgba(245,196,81,0.3); }
+    pre {
+      background: #0a0c10; border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px 14px; overflow-x: auto; margin: 8px 0;
+      font: 13px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      color: #e6e8ee;
+    }
+    code { background: #0a0c10; padding: 1px 6px; border-radius: 3px; font: 13px ui-monospace, "SF Mono", Menlo, monospace; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+    th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+    td code { word-break: break-all; }
+    .hint { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.5; }
+    .hint code { font-size: 12px; }
+    .footer { margin-top: 60px; color: var(--muted); font-size: 13px; }
+
+    /* live status */
+    .live {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      margin: 8px 0 18px;
+    }
+    .live .stat {
+      background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px 14px;
+    }
+    .live .stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    .live .stat .v { font-size: 18px; font-weight: 600; margin-top: 4px; font-variant-numeric: tabular-nums; }
+    .live .stat .v.small { font-size: 14px; font-family: ui-monospace, "SF Mono", Menlo, monospace; word-break: break-all; }
+    .pulsing { color: var(--ok); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+    @media (max-width: 700px) { .live { grid-template-columns: repeat(2, 1fr); } }
+
+    /* producer rotation strip */
+    .strip { display: flex; gap: 4px; margin: 8px 0; flex-wrap: wrap; }
+    .strip .blk {
+      padding: 4px 10px; border-radius: 4px; font: 11px ui-monospace, "SF Mono", Menlo, monospace;
+      background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+      transition: background 0.2s;
+    }
+    .strip .blk.new { background: rgba(124, 220, 254, 0.18); border-color: var(--accent); }
+    .legend { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    /* try-it */
+    .try {
+      display: inline-block; margin-top: 6px; padding: 4px 12px; border-radius: 4px;
+      background: var(--panel-2); border: 1px solid var(--border); color: var(--accent);
+      font-size: 12px; cursor: pointer; font-family: inherit;
+    }
+    .try:hover { background: var(--panel); border-color: var(--accent); }
+    .try-out {
+      margin: 6px 0 14px; padding: 10px 12px; background: #050608; border: 1px solid var(--border);
+      border-radius: 4px; font: 12px ui-monospace, "SF Mono", Menlo, monospace;
+      color: #c8d0dd; max-height: 280px; overflow: auto; display: none; white-space: pre-wrap;
+    }
+    .try-out.show { display: block; }
+    .try-out.err { color: #ff8a8a; border-color: #5a2a2a; }
+
+    /* health pill */
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    .dot.ok   { background: var(--ok);   box-shadow: 0 0 6px rgba(95,208,127,0.6); }
+    .dot.warn { background: var(--warn); box-shadow: 0 0 6px rgba(245,196,81,0.6); }
+    .dot.err  { background: #ff5a5a;     box-shadow: 0 0 6px rgba(255,90,90,0.6); }
+  </style>
+</head>
+<body>
+<main>
+
+  <span class="pill">Testnet</span>
+  <span id="health-pill" class="pill ok"><span class="dot ok"></span>Up</span>
+  <h1>A-Chain Alpine — public endpoint</h1>
+  <p class="lede">
+    Operator endpoint serving the raw
+    <a href="https://github.com/MetalBlockchain/metalgo">MetalGo</a> node API and a
+    <a href="https://github.com/MetalBlockchain/pulsevm-hyperion">Hyperion</a> indexer for
+    <strong>A-Chain Alpine</strong>, the <a href="https://github.com/MetalBlockchain/pulsevm">PulseVM</a> testnet on
+    <a href="https://docs.metalblockchain.org">Tahoe</a>.
+    <em>(Edit <code>/var/www/&lt;your-domain&gt;/index.html</code> to add your operator credit + link.)</em>
+  </p>
+
+  <h2 style="margin-top:18px"><span class="pulsing">●</span> Live status</h2>
+  <div class="live" id="live">
+    <div class="stat"><div class="k">Head block</div><div class="v" id="s-head">…</div></div>
+    <div class="stat"><div class="k">Current builder</div><div class="v" id="s-prod">…</div></div>
+    <div class="stat"><div class="k">Last irreversible</div><div class="v" id="s-lib">…</div></div>
+    <div class="stat"><div class="k">Server time (UTC)</div><div class="v small" id="s-time">…</div></div>
+  </div>
+
+  <h3 style="margin-top:18px">Recent producers <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;font-size:12px">(captured client-side; refreshes every 3 s — newest on the right)</span></h3>
+  <div class="strip" id="strip"><span style="color:var(--muted);font-size:13px">collecting…</span></div>
+  <div class="legend">Snowman picks one validator per block. Over time the spread approaches uniform across the validator set.</div>
+
+  <div class="card">
+    <h3>Network identity</h3>
+    <p class="lede" style="margin:0 0 14px">
+      Pulse runs as a subnet on Metal Blockchain, so an A-Chain endpoint has <em>four</em> identifiers, each addressing a different layer. Antelope had one "chain ID" — Metal has a layered model.
+    </p>
+    <table>
+      <tr>
+        <th>Subnet ID</th>
+        <td>
+          <code>zT2upfR4BSC55bvxLSbkuHBAcWL7jeG9aJwo8BdEGvV7NCxLW</code>
+          <div class="hint">The validator-set identifier on the P-Chain. A subnet is a group of validators that have agreed to run one or more blockchains. <code>track-subnets</code> in your <code>metalgo</code> config takes this value. Created once when Metallicus issued the <code>CreateSubnetTx</code>.</div>
+        </td>
+      </tr>
+      <tr>
+        <th>Blockchain ID</th>
+        <td>
+          <code>6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y</code>
+          <div class="hint">The instance of A-Chain running inside the subnet above. URLs use this: <code>/ext/bc/&lt;blockchainID&gt;/rpc</code>. Per-chain config lives at <code>~/.metalgo/configs/chains/&lt;blockchainID&gt;.json</code>. Issued by the P-Chain when Metallicus ran <code>CreateBlockchainTx</code>; encodes "this subnet runs the Pulse VM with this genesis".</div>
+        </td>
+      </tr>
+      <tr>
+        <th>Chain ID</th>
+        <td>
+          <code>0d6f033e887fae475d641104b6e87762b6c869e87a101afeeb64d608ab376618</code>
+          <div class="hint">The Antelope-style chain ID — what gets mixed into every transaction signing digest. This is what <code>pulsevm-js</code>, <code>pulse-cli</code>, and any signer use to bind a signature to this specific chain so a tx can't be replayed elsewhere. Returned by <code>pulsevm.getInfo</code>. Different value, same purpose as <code>cleos get info</code>'s <code>chain_id</code>.</div>
+        </td>
+      </tr>
+      <tr>
+        <th>Pulse VM ID</th>
+        <td>
+          <code>rXcAFxZvio99epp6TzEwYfexCfPAbJuBTMsjUUoiT7PkVykNs</code>
+          <div class="hint">Identifies the Pulse virtual machine binary that MetalGo loads as a plugin. <em>Same on every Pulse subnet on every network</em> — testnet, mainnet, devnet — because they all run the same VM. Your plugin file at <code>~/.metalgo/plugins/&lt;VM_ID&gt;</code> must be named exactly this string.</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Which one do I use?</h3>
+    <table>
+      <tr><th>Doing this</th><th>Reach for</th></tr>
+      <tr><td>Configuring metalgo to follow this subnet</td><td>Subnet ID</td></tr>
+      <tr><td>Hitting the JSON-RPC / building a URL</td><td>Blockchain ID</td></tr>
+      <tr><td>Signing a transaction</td><td>Chain ID</td></tr>
+      <tr><td>Naming the plugin binary in the plugins dir</td><td>Pulse VM ID</td></tr>
+    </table>
+  </div>
+
+  <h2><a href="https://github.com/MetalBlockchain/metalgo">MetalGo</a> endpoints (raw node API)</h2>
+  <p>Reverse-proxied to the local <code>metalgo</code> on <code>127.0.0.1:9650</code>. API reference: <a href="https://docs.metalblockchain.org/build/metalgo-apis/issuing-api-calls">metalgo APIs</a>.</p>
+
+  <h3>Node info</h3>
+<pre>curl -X POST -H 'content-type: application/json' \
+  --data '{"jsonrpc":"2.0","method":"info.getNodeID","params":{},"id":1}' \
+  https://YOUR-DOMAIN.example.com/ext/info</pre>
+  <button class="try" data-url="/ext/info" data-body='{"jsonrpc":"2.0","method":"info.getNodeID","params":{},"id":1}'>▶ Try it</button>
+  <div class="try-out"></div>
+
+  <h3>Pulse JSON-RPC (chain head, accounts, tables, push tx)</h3>
+<pre>curl -s -X POST -H 'content-type: application/json' \
+  --data '{"jsonrpc":"2.0","method":"pulsevm.getInfo","params":{},"id":1}' \
+  https://YOUR-DOMAIN.example.com/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc</pre>
+  <button class="try" data-url="/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc" data-body='{"jsonrpc":"2.0","method":"pulsevm.getInfo","params":{},"id":1}'>▶ Try it</button>
+  <div class="try-out"></div>
+
+<pre>curl -s -X POST -H 'content-type: application/json' \
+  --data '{"jsonrpc":"2.0","method":"pulsevm.getAccount","params":{"account_name":"protonnz"},"id":1}' \
+  https://YOUR-DOMAIN.example.com/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc</pre>
+  <button class="try" data-url="/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc" data-body='{"jsonrpc":"2.0","method":"pulsevm.getAccount","params":{"account_name":"protonnz"},"id":1}'>▶ Try it</button>
+  <div class="try-out"></div>
+
+  <h3>P-Chain (validators)</h3>
+<pre>curl -s -X POST -H 'content-type: application/json' \
+  --data '{"jsonrpc":"2.0","method":"platform.getCurrentValidators","params":{},"id":1}' \
+  https://YOUR-DOMAIN.example.com/ext/bc/P</pre>
+
+  <h2><a href="https://github.com/MetalBlockchain/pulsevm-hyperion">Hyperion</a> API (history + state index)</h2>
+  <p>Reverse-proxied to the local Hyperion API on <code>127.0.0.1:7000</code> (<a href="https://github.com/MetalBlockchain/pulsevm-hyperion/tree/release/3.6">release/3.6</a> branch). Upstream: <a href="https://github.com/eosrio/Hyperion">eosrio/Hyperion</a>.</p>
+
+  <h3>Health</h3>
+<pre>curl -s https://YOUR-DOMAIN.example.com/v2/health | jq</pre>
+  <button class="try" data-url="/v2/health">▶ Try it</button>
+  <div class="try-out"></div>
+
+  <h3>Recent actions</h3>
+<pre>curl -s 'https://YOUR-DOMAIN.example.com/v2/history/get_actions?limit=5' | jq</pre>
+  <button class="try" data-url="/v2/history/get_actions?limit=5">▶ Try it</button>
+  <div class="try-out"></div>
+
+  <h3>Account state</h3>
+<pre>curl -s 'https://YOUR-DOMAIN.example.com/v2/state/get_account?account=protonnz' | jq</pre>
+
+  <h3>Transaction by id</h3>
+<pre>curl -s 'https://YOUR-DOMAIN.example.com/v2/history/get_transaction?id=&lt;TX_ID&gt;' | jq</pre>
+
+  <p class="lede" style="margin-top:18px">
+    <span class="pill warn">Note</span>
+    A handful of v2 endpoints (<code>get_creator</code>, <code>get_created_accounts</code>) and the legacy <code>/v1/chain/*</code> surface aren't fully wired in 3.6.
+  </p>
+
+  <h2>Programmatic access</h2>
+
+  <h3>TypeScript (<a href="https://github.com/MetalBlockchain/pulsevm-js">pulsevm-js</a>)</h3>
+<pre>import { PulseAPI } from '@metalblockchain/pulsevm-js'
+
+const api = new PulseAPI(
+  'https://YOUR-DOMAIN.example.com/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc'
+)
+console.log(await api.getInfo())</pre>
+
+  <h3><a href="https://github.com/MetalBlockchain/pulsevm/tree/main/crates/pulse">pulse-cli</a> (canonical Rust CLI)</h3>
+<pre>pulse endpoint set https://YOUR-DOMAIN.example.com/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc
+pulse chain:info
+pulse account protonnz</pre>
+
+  <p class="footer">
+    <strong>Powered by:</strong>
+    <a href="https://github.com/MetalBlockchain/pulsevm">PulseVM</a> +
+    <a href="https://github.com/MetalBlockchain/metalgo">MetalGo</a> +
+    <a href="https://github.com/MetalBlockchain/pulsevm-hyperion/tree/release/3.6">Hyperion</a><br>
+    <strong>Upstream repos:</strong>
+    <a href="https://github.com/MetalBlockchain/pulsevm">pulsevm</a> ·
+    <a href="https://github.com/MetalBlockchain/metalgo">metalgo</a> ·
+    <a href="https://github.com/MetalBlockchain/pulsevm-js">pulsevm-js</a> ·
+    <a href="https://github.com/MetalBlockchain/pulsevm-hyperion">pulsevm-hyperion</a> ·
+    <a href="https://github.com/MetalBlockchain/pulse-cdt-rust">pulse-cdt-rust</a>
+  </p>
+
+</main>
+
+<script>
+(() => {
+  const RPC = '/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc';
+  const STRIP_MAX = 24;
+  const STRIP = [];
+
+  // ---- live status (3s poll) -----------------------------------------------
+  async function tickLive() {
+    try {
+      const r = await fetch(RPC, {
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        body: '{"jsonrpc":"2.0","method":"pulsevm.getInfo","params":{},"id":1}',
+      });
+      const j = await r.json();
+      const i = j.result;
+      const head = i.head_block_num.toLocaleString();
+      const lib = i.last_irreversible_block_num.toLocaleString();
+      const gap = i.head_block_num - i.last_irreversible_block_num;
+      document.getElementById('s-head').textContent = head;
+      document.getElementById('s-prod').textContent = i.head_block_producer || '—';
+      document.getElementById('s-lib').textContent = lib + (gap ? ` (−${gap})` : '');
+      document.getElementById('s-time').textContent = i.head_block_time.replace('T', ' ');
+
+      // health pill ok
+      const pill = document.getElementById('health-pill');
+      pill.className = 'pill ok';
+      pill.innerHTML = '<span class="dot ok"></span>Up';
+
+      // producer rotation strip — append head_block_num+producer if new
+      const last = STRIP[STRIP.length - 1];
+      if (!last || last.num !== i.head_block_num) {
+        STRIP.push({num: i.head_block_num, prod: i.head_block_producer || '—'});
+        if (STRIP.length > STRIP_MAX) STRIP.shift();
+        renderStrip();
+      }
+    } catch (e) {
+      const pill = document.getElementById('health-pill');
+      pill.className = 'pill warn';
+      pill.innerHTML = '<span class="dot err"></span>RPC error';
+      document.getElementById('s-head').textContent = '—';
+    }
+  }
+
+  function renderStrip() {
+    const el = document.getElementById('strip');
+    el.innerHTML = '';
+    STRIP.forEach((b, idx) => {
+      const span = document.createElement('span');
+      span.className = 'blk' + (idx === STRIP.length - 1 ? ' new' : '');
+      span.textContent = `${b.num} · ${b.prod}`;
+      span.title = `Block ${b.num} signed by ${b.prod}`;
+      el.appendChild(span);
+    });
+  }
+
+  setInterval(tickLive, 3000);
+  tickLive();
+
+  // ---- try-it buttons -------------------------------------------------------
+  document.querySelectorAll('button.try').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const url = btn.dataset.url;
+      const body = btn.dataset.body;
+      const out = btn.nextElementSibling;
+      out.classList.add('show');
+      out.classList.remove('err');
+      out.textContent = '… running';
+      try {
+        const opts = body
+          ? {method: 'POST', headers: {'content-type': 'application/json'}, body}
+          : {};
+        const r = await fetch(url, opts);
+        const text = await r.text();
+        try {
+          out.textContent = JSON.stringify(JSON.parse(text), null, 2);
+        } catch {
+          out.textContent = text;
+        }
+      } catch (e) {
+        out.classList.add('err');
+        out.textContent = 'fetch failed: ' + e.message;
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

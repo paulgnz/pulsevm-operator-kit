@@ -1,0 +1,23 @@
+# OS / editor cruft
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local secrets / state — only the .example versions are tracked
+*.pem
+*.key
+.env
+.env.*
+hyperion/connections.json
+
+# Build artifacts
+node_modules/
+dist/
+build/
+target/
+*.log
+tmp/
+*.tmp

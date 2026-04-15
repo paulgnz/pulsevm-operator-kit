@@ -1,0 +1,76 @@
+# Hyperion support stack: Elasticsearch 9 + Mongo 7 + RabbitMQ 3 + Redis 7.
+# Tuned for a 16 GB dev box already running metalgo + pulsevm.
+# For a real BP-operated Hyperion, move to a dedicated box with >= 32 GB.
+
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.3
+    container_name: hyp-es
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms4g -Xmx4g   # half of available RAM, leave room for metalgo + OS page cache
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "127.0.0.1:9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+
+  mongo:
+    image: mongo:7
+    container_name: hyp-mongo
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: hyp-rabbit
+    environment:
+      - RABBITMQ_DEFAULT_USER=hyp
+      - RABBITMQ_DEFAULT_PASS=hypdev
+    ports:
+      - "127.0.0.1:5672:5672"      # amqp
+      - "127.0.0.1:15672:15672"    # management UI (localhost only; tunnel over SSH to view)
+    volumes:
+      - rabbit-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: hyp-redis
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  es-data:
+  mongo-data:
+  rabbit-data:
+  redis-data:

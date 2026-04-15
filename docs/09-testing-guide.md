@@ -12,7 +12,7 @@ See [bp-setup/06-join-a-chain-alpine.md](bp-setup/06-join-a-chain-alpine.md) for
 # Prereq: bootstrap.sh has run
 mkdir -p /etc/metalgo/chains/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y
 cat >/etc/metalgo/chains/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/config.json <<'EOF'
-{"producer_name":"observer","producer_key":"PVT_K1_2pjSqJxTbRHq8h8aHHTux81Ypscb36Q2syB8UJbZcUmxbfZdnT"}
+{"producer_name":"observer","producer_key":"PVT_K1_<your-private-key-here>"}
 EOF
 
 tmux new-session -d -s mgo "/opt/metalgo/metalgo \
@@ -52,7 +52,7 @@ Expected: `head` and `chain_id` match the public Alpine RPC.
 - Push transactions
 - Register a producer
 
-All of those need a payer account with signing authority — see [00-migration-playbook.md](00-migration-playbook.md) Phases 3–5.
+All of those need a payer account with signing authority — see [`bp-setup/07-becoming-a-validator.md`](bp-setup/07-becoming-a-validator.md).
 
 ## Path B (fallback): local throwaway devnet
 
@@ -76,7 +76,7 @@ tmux new-session -d -s mnr \
   --number-of-nodes=5 \
   --avalanchego-path /opt/metalgo/metalgo \
   --plugin-dir /opt/pulsevm/plugins \
-  --blockchain-specs '[{"vm_name":"pulsevm","genesis":"/root/pulsevm-experimental/pulsevm/genesis.json"}]'
+  --blockchain-specs '[{"vm_name":"pulsevm","genesis":"/root/pulsevm-src/pulsevm/genesis.json"}]'
 ```
 
 **Important caveats for Path B (all captured in [edge-cases.md](edge-cases.md)):**

@@ -9,10 +9,10 @@ Targets the canonical Metallicus stack: `metalgo` 1.13.x-tahoe + `pulsevm` v0.2.
 Fresh Ubuntu 24.04 box, root shell:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/<your-fork>/pulsevm-operator-kit/main/scripts/bootstrap.sh | bash
+curl -sSL https://raw.githubusercontent.com/paulgnz/pulsevm-operator-kit/main/scripts/bootstrap.sh | bash
 ```
 
-You'll get a profile menu. Pick one, answer 5–10 prompts, end up at a running node — optionally with a public TLS endpoint and a landing page like the [reference deployment](https://a-chain-testnet.protonnz.com).
+You'll get a profile menu. Pick one, answer 5–10 prompts, end up at a running node — optionally with a public TLS endpoint and an interactive landing page.
 
 For a fully unattended install (CI / experienced operators):
 
@@ -71,9 +71,14 @@ Pulse subnets have **four** identifiers, each addressing a different layer:
 
 Full explanation in [`docs/06-rpc-reference.md`](docs/06-rpc-reference.md) and on the deployed landing page.
 
-## Live reference deployment
+## What `testnet-onebox` produces
 
-[`https://a-chain-testnet.protonnz.com`](https://a-chain-testnet.protonnz.com) — what `testnet-onebox` produces. Live status panel, producer rotation, "Try it" buttons against both metalgo and Hyperion.
+A public TLS endpoint that exposes:
+- The MetalGo node API at `/ext/*` (with `/admin /keystore /auth` blocked at the proxy)
+- Hyperion REST + WS at `/v1/*`, `/v2/*`
+- A landing page at `/` with **live network status** (auto-refreshes every 3 s), a **producer rotation strip** (visualizes Snowman pick distribution), and **"▶ Try it" buttons** that exercise the curl examples in-browser.
+
+A live reference is at [`https://a-chain-testnet.protonnz.com`](https://a-chain-testnet.protonnz.com) — a community-operated testnet endpoint built with this kit.
 
 ## Companion repos
 

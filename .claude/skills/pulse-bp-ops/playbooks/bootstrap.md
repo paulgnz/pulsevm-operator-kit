@@ -5,7 +5,7 @@ Goal: from a blank Ubuntu 24.04 box to `metalgo` + `pulsevm` plugin running and 
 ## One-shot path (recommended)
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/paulgnz/pulsevm-experimental/main/scripts/bootstrap.sh | bash
+curl -sSL https://raw.githubusercontent.com/paulgnz/pulsevm-operator-kit/main/scripts/bootstrap.sh | bash
 ```
 
 The script is idempotent. It lays down:

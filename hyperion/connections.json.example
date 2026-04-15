@@ -1,11 +1,11 @@
 {
-  "_comment": "Copy this to connections.json and substitute CHANGE_ME values. Do NOT commit the real connections.json — it's in .gitignore.",
+  "_comment": "Copy this to connections.json. Defaults below match hyperion/docker-compose.yml for an out-of-the-box localhost-only setup. CHANGE for any production deployment, in BOTH files.",
   "amqp": {
     "host": "127.0.0.1:5672",
     "api": "127.0.0.1:15672",
     "protocol": "http",
-    "user": "CHANGE_ME",
-    "pass": "CHANGE_ME",
+    "user": "hyp",
+    "pass": "hypdev",
     "vhost": "hyperion",
     "frameMax": "0x10000"
   },

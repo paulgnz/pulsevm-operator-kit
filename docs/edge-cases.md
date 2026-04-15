@@ -19,9 +19,9 @@ PulseVM uses **objective CPU metering**: per [`PROTOCOL.md`](https://github.com/
 
 ---
 
-## 2026-04-15 — **Deployed `pulse` system-contract WASM ≠ `pulse-cdt-rust` repo source** (Glenn confirmed)
+## 2026-04-15 — **Deployed `pulse` system-contract WASM ≠ `pulse-cdt-rust` repo source**
 
-**Symptom:** Grepping `pulse-cdt-rust/contracts/pulse_system/src/lib.rs` for `#[action]`-annotated functions gives an action list that may or may not match what's actually deployed at the `pulse` account on A-Chain Alpine. Glenn confirmed on 2026-04-15: *"the system contract is a bit different."*
+**Symptom:** Grepping `pulse-cdt-rust/contracts/pulse_system/src/lib.rs` for `#[action]`-annotated functions gives an action list that may or may not match what's actually deployed at the `pulse` account on A-Chain Alpine. Metallicus has confirmed the deployed system contract diverges from the public `pulse-cdt-rust` source.
 
 **Canonical source of truth for on-chain action surface:** decode the live ABI, not the repo.
 

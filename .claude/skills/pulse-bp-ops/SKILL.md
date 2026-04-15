@@ -26,9 +26,8 @@ wiki/
 │   ├── 06-join-a-chain-alpine.md       join the live testnet
 │   ├── 07-becoming-a-validator.md      Tahoe primary → A-Chain → regproducer
 │   └── 11-split-architecture-...md     mainnet signer + API split
-├── 00-migration-playbook.md            full XPR → A-Chain rehearsal log
 ├── edge-cases.md                       Chainbase, Snowman, mmap recovery
-└── README.md                           wiki entry point
+└── README.md                           docs entry point
 ```
 
 ## Critical facts to keep in front of mind
@@ -94,4 +93,4 @@ If a question depends on freshness ("is this still right?"), run `git log origin
 
 ## Updating this skill
 
-This skill lives under `.claude/skills/pulse-bp-ops/` in [paulgnz/pulsevm-experimental](https://github.com/paulgnz/pulsevm-experimental). Edit the playbooks as the chain matures. Re-read SKILL.md after substantive playbook reorganizations so the routing table stays correct.
+This skill lives under `.claude/skills/pulse-bp-ops/` in [`paulgnz/pulsevm-operator-kit`](https://github.com/paulgnz/pulsevm-operator-kit). Edit the playbooks as the chain matures. Re-read SKILL.md after substantive playbook reorganizations so the routing table stays correct.

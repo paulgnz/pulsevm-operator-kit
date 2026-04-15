@@ -1,6 +1,6 @@
 # 07 — Becoming a validator on A-Chain Alpine
 
-The actual end-to-end sequence as performed by `protonnz` on 2026-04-15. Each step here is something we ran live and verified; every script referenced is in [`scripts/`](../../scripts/) and works against the live testnet.
+The end-to-end sequence to register a new validator on A-Chain Alpine, verified live in April 2026. Every script referenced is in [`scripts/`](../../scripts/) and works against the live testnet.
 
 There are **three layers + a trigger**:
 

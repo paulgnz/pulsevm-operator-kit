@@ -32,7 +32,7 @@ Read order:
 /opt/pulsevm/plugins/<VM_ID>                  # the VM plugin
 /opt/bin/metal-network-runner                 # local multi-node orchestrator
 /opt/bin/pulse-cli  /opt/bin/pulse-keosd      # signing / CLI tools
-/root/pulsevm-experimental/                    # source checkouts
+/root/pulsevm-src/                    # source checkouts
 
 # The magic VM_ID
 rXcAFxZvio99epp6TzEwYfexCfPAbJuBTMsjUUoiT7PkVykNs

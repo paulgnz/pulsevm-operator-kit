@@ -114,7 +114,7 @@ Convenience for downloading release assets (`gh release download`), triaging iss
 
 ### 9. Source checkouts
 
-Clones the four repos into `/root/pulsevm-experimental/`:
+Clones the four repos into `/root/pulsevm-src/`:
 - `pulsevm` — VM core (Rust + C++ FFI). **Includes Boost as a git submodule**, adding ~1 GB and many minutes to the clone. See [edge-cases.md](../edge-cases.md).
 - `pulse-cdt-rust` — Contract SDK.
 - `pulsevm-hyperion` — History indexer.
@@ -184,7 +184,7 @@ This script runs as root and installs into `/opt`. For a production signing node
 1. **Create a dedicated service user**, e.g. `pulse`, and run everything under `systemd` units with `User=pulse`.
 2. **Firewall 22/tcp** to a bastion or VPN CIDR only.
 3. **Disable root SSH login** after the install (`PermitRootLogin no` in `/etc/ssh/sshd_config`).
-4. **Don't leave `/root/pulsevm-experimental/` on the box** — source code is attack surface. Keep it on a dev machine.
+4. **Don't leave `/root/pulsevm-src/` on the box** — source code is attack surface. Keep it on a dev machine.
 5. **Signing keys live in `pulse-keosd`, not in environment variables.** See [03-keys-and-signing.md](03-keys-and-signing.md).
 
 The dev box we just provisioned is fine with the defaults — this list is for the day you stand up a real producer node.

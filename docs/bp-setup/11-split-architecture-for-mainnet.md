@@ -149,7 +149,7 @@ For testnet or any dev-grade BP, one box is fine. What we're running now:
 - metalgo + pulsevm + Hyperion + ES stack + nginx + rest-compat shim + heartbeat — all on one
 - TLS via Let's Encrypt + certbot
 - pm2 supervising 4 node processes; 4 docker containers
-- Publicly exposed at `https://a-chain-testnet.protonnz.com`
+- Publicly exposed at your TLS endpoint of choice
 
 This stays healthy for testnet-scale workloads (hundreds of blocks, tens of GB Hyperion indices). It's a perfect starter / rehearsal topology.
 

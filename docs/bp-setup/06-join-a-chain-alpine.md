@@ -41,7 +41,7 @@ mkdir -p /etc/metalgo/chains/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y
 cat >/etc/metalgo/chains/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/config.json <<'EOF'
 {
   "producer_name": "observer",
-  "producer_key": "PVT_K1_2pjSqJxTbRHq8h8aHHTux81Ypscb36Q2syB8UJbZcUmxbfZdnT"
+  "producer_key": "PVT_K1_<your-private-key-here>"
 }
 EOF
 ```

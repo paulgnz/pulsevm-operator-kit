@@ -14,8 +14,7 @@
 # Profiles
 # --------
 #   dev-onebox          Local devnet — build toolchain + MNR + Hyperion.
-#   testnet-onebox      Public testnet validator on one box (matches what
-#                       protonnz runs at a-chain-testnet.protonnz.com).
+#   testnet-onebox      Public testnet validator on one box.
 #   mainnet-signer      Production producer-only. Smallest surface.
 #   mainnet-api         Production observer + Hyperion + nginx + TLS.
 #   relay               Non-producing full node, peer-mesh contributor.
@@ -66,7 +65,7 @@ METALGO_DIR=/opt/metalgo
 PULSEVM_DIR=/opt/pulsevm
 PLUGIN_DIR="${PULSEVM_DIR}/plugins"
 BIN_DIR=/opt/bin
-SRC_DIR=/root/pulsevm-experimental
+SRC_DIR=/root/pulsevm-src
 LOG=/var/log/pulsevm-bootstrap.log
 METALGO_HOME="${HOME}/.metalgo"
 
@@ -758,6 +757,6 @@ EOF
 cat <<EOF
   Bootstrap log:    $LOG
   Version manifest: /opt/versions.txt
-  Wiki / playbook:  https://github.com/paulgnz/pulsevm-experimental
+  Docs / playbook:  https://github.com/paulgnz/pulsevm-operator-kit
 ================================================================
 EOF

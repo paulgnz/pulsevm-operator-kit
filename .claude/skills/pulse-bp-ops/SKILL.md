@@ -72,13 +72,13 @@ Prefer running operator commands through `pulse-cli-ts` over hand-rolling `pulse
 
 ## When unsure about which Metallicus repo branch to use
 
-Glenn-verified branch pins (as of 2026-04-15):
+Branch pins (updated 2026-04-24):
 
 | Repo | Branch / tag | Notes |
 |---|---|---|
 | `MetalBlockchain/metalgo` | `1.13.x-tahoe` line | rpcchainvm v43 |
-| `MetalBlockchain/pulsevm` | tag `v0.2.3` | main is moving past — `getTableByScope`, install script, boot fix landed since |
-| `MetalBlockchain/pulsevm-js` | `main` | wharfkit compat + `server_time` landed; rebase our PR if revisiting |
+| `MetalBlockchain/pulsevm` | tag `v0.2.4` | adds `get info`, `get account`, `transfer`, `set code/abi` to canonical CLI; packed_transaction deserialization fix |
+| `MetalBlockchain/pulsevm-js` | `main` | wharfkit compat + `server_time` landed |
 | `MetalBlockchain/pulsevm-hyperion` | `release/3.6` | NOT `main` (4.0-beta; not Pulse-ready) |
 | `MetalBlockchain/pulse-cdt-rust` | `master` | `main` is empty |
 

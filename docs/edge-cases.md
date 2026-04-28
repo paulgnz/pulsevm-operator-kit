@@ -4,6 +4,24 @@ Running log of surprises hit while standing up PulseVM. Appended to as we go —
 
 ---
 
+## 2026-04-24 — **`db_idx*` secondary-index intrinsics not in v0.2.x (fixed in v0.3)**
+
+**Symptom:** Porting an Antelope contract that uses `multi_index` with secondary keys — `idx64`, `idx128`, `idx_double`, `idx_long_double` — produces a wasm import error or unresolved-host-function error at deploy / first-call time. Looks like:
+
+```
+wasm runtime error: missing import: env::db_idx64_store
+```
+
+**Cause:** PulseVM v0.2.x deliberately ships only the primary-key `db_*` intrinsic family. The secondary-index family (`db_idx64_*`, `db_idx128_*`, `db_idx_double_*`, `db_idx_long_double_*`) isn't implemented yet.
+
+**Fix:** Wait for v0.3, which Glenn confirmed (2026-04-24) will ship the full `db_idx*` family.
+
+**Workaround for v0.2.x dapps if you must ship now:** redesign single-secondary-index uses as **parallel primary tables** keyed by what would have been the secondary value. Doesn't scale to multi-index-of-many-secondaries; viable for simple cases (1 secondary index → 1 mirror table, atomically maintained).
+
+**Practical impact:** ~95% of real XPR Network dapps use secondary indexes (token registries, marketplaces, vote/stake tables, oracle feeds). Treat **v0.3 as the gate for real dapp porting**.
+
+---
+
 ## 2026-04-15 — **Bloks explorer "CPU time" is instruction count, not microseconds** (Glenn confirmed)
 
 The "CPU time" / "CPU usage" field shown for each transaction on the Bloks-powered explorer at `https://a-chain-testnet.metalblockchain.org/` is **the WASM instruction count billed**, not wall-clock execution time. The explorer hasn't been updated to reflect PulseVM's objective-metering model and still reads / labels the field as if it were Antelope's wall-clock µs. This is purely a UI labelling artifact — the on-chain value is unambiguous.

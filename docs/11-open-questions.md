@@ -17,7 +17,7 @@ From TODO/FIXME scanning (pulsevm core):
 2. `block/block.rs` — time-skew tolerance, previous-block-id validation, mroot validation are all TODOs. Are they implemented anywhere else? Any security implication?
 3. `apply_context.rs` — recursion depth hardcoded 1024. Is this intentional forever, or config-bound later?
 4. `state_history/log.rs` — SHiP "magic number" placeholder. Does Hyperion's indexer tolerate this?
-5. **No secondary-index intrinsics.** Is this coming? If yes, what roadmap / milestone?
+5. ~~**No secondary-index intrinsics.** Is this coming? If yes, what roadmap / milestone?~~ **Answered (2026-04-24):** Glenn confirmed v0.3 will ship the `db_idx*` family (`db_idx64`, `db_idx128`, `db_idx_double`, `db_idx_long_double`). Required for any contract using Antelope multi-index with secondary keys — i.e. ~all real dapps (token registries, marketplaces, vote/stake tables). v0.2.x can't port these; v0.3 unlocks them.
 6. **State sync reports disabled?** Need to read `is_state_sync_enabled` impl to confirm; if disabled, cold-sync time for mainnet-scale state would be painful.
 7. **Single producer per node model.** Is there a planned multi-producer/failover story?
 
@@ -28,6 +28,17 @@ From TODO/FIXME scanning (pulsevm core):
 3. `pulsevm-hyperion` CLI tooling (`hyp-config`, `hyp-control`, `repair-cli`, `sync-modules`) is half-migrated. Has this been noticed? Should we upstream a patch?
 4. `pulsevm-js` README example references removed classes (`BaseTransaction`) — docs need a refresh.
 5. `pulse-cdt` (the TypeScript/AssemblyScript version) — deprecated in favour of Rust, or kept as an alternative?
+
+## Roadmap signals (Metallicus, 2026-04-24)
+
+From conversation with Glenn after the v0.2.4 release:
+
+1. **v0.3 will ship `db_idx*` secondary-index intrinsics.** Required for any contract using Antelope multi-index with secondary keys. Until v0.3, dapp porting is gated to single-primary-key contracts only.
+2. **WebAuth deep-linking integration in progress.** Metallicus is working with the WebAuth team to support deep links from the block explorer to the WebAuth wallet for tx signing. This is the missing user-facing signer for Pulse — once shipped, real dapps can have real users sign txs without each dapp rolling its own signer UX.
+3. **First dapp deploys** likely follow once (1) and (2) land.
+
+Order of unblocks for "first real dapp running on A-Chain with real users":
+> v0.2.x ✅ → v0.3 (db_idx) → WebAuth deep linking → port first dapps → public users sign
 
 ## Strategic / governance
 

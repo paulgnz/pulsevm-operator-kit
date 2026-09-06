@@ -25,13 +25,13 @@ Edit `~/.metalgo/config.json`:
 
 ```json
 {
-  "track-subnets": "zT2upfR4BSC55bvxLSbkuHBAcWL7jeG9aJwo8BdEGvV7NCxLW",
+  "track-subnets": "<ALPINE_SUBNET_ID — current value at pulsevm.dev/network/endpoints>",
   "http-host": "0.0.0.0",
   "log-level": "info"
 }
 ```
 
-Drop the Snowman tuning at `~/.metalgo/configs/subnets/zT2upfR4BSC55bvxLSbkuHBAcWL7jeG9aJwo8BdEGvV7NCxLW.json`:
+Drop the Snowman tuning at `~/.metalgo/configs/subnets/<ALPINE_SUBNET_ID>.json`:
 
 ```json
 {
@@ -43,7 +43,7 @@ Drop the Snowman tuning at `~/.metalgo/configs/subnets/zT2upfR4BSC55bvxLSbkuHBAc
 }
 ```
 
-Without this you will get `insufficient number of validators` because defaults (`k=20, alpha=15`) are impossible on a 6-validator subnet.
+Without this you will get `insufficient number of validators` because the defaults (`k=20, alpha=15`) exceed the subnet's validator count; set `k` no larger than `platform.getCurrentValidators` reports and use the same params on every node.
 
 ## Step 3 — Restart cleanly
 
@@ -56,7 +56,7 @@ metalgo --config-file=~/.metalgo/config.json
 ## Step 4 — Confirm sync
 
 ```bash
-ALPINE_RPC=http://127.0.0.1:9650/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc
+ALPINE_RPC=http://127.0.0.1:9650/ext/bc/<ALPINE_BLOCKCHAIN_ID>/rpc
 
 curl -s -X POST -H 'content-type: application/json' \
   --data '{"jsonrpc":"2.0","method":"pulsevm.getInfo","params":{},"id":1}' \
@@ -68,7 +68,7 @@ Compare your `head_block_num` against the public RPC:
 ```bash
 curl -s -X POST -H 'content-type: application/json' \
   --data '{"jsonrpc":"2.0","method":"pulsevm.getInfo","params":{},"id":1}' \
-  https://a-chain-alpine.metalblockchain.org/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc | jq
+  https://a-chain-alpine.metalblockchain.org/ext/bc/<ALPINE_BLOCKCHAIN_ID>/rpc | jq
 ```
 
 Within a few seconds of each other = synced.

@@ -6,7 +6,7 @@
 
 ## When to upgrade
 
-- A new tagged release on `MetalBlockchain/pulsevm` (currently latest: `v0.2.3`)
+- A new tagged release on `MetalBlockchain/pulsevm` (`gh release list -R MetalBlockchain/pulsevm --limit 3`)
 - A Tahoe-line metalgo bump (e.g. `1.13.5-tahoe` → `1.13.6-tahoe`)
 - A coordinated network upgrade announcement
 
@@ -33,7 +33,7 @@ rsync -a ~/.metalgo/chainData/ /backup/chainData-$(date +%F)/
 
 # 3. Rebuild both
 cd ~/src/metalgo && git pull && ./scripts/build.sh
-cd ~/src/pulsevm && git fetch --tags && git checkout v0.2.4 && cargo build --release  # or matching tag
+cd ~/src/pulsevm && git fetch --tags && git checkout <release tag> && LLVM_SYS_221_PREFIX=/usr/lib/llvm-22 cargo build --release -p pulsevm   # LLVM 22 required
 
 # 4. Replace binaries
 sudo cp metalgo/build/metalgo /opt/metalgo/

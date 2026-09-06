@@ -17,7 +17,7 @@ Signs from whatever private key for `<from>@active` is in the wallet (`pulse wal
 ```typescript
 import { PulseAPI, PrivateKey, Action, Transaction, SignedTransaction, PackedTransaction } from '@metalblockchain/pulsevm-js'
 
-const api = new PulseAPI('https://a-chain-alpine.metalblockchain.org/ext/bc/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y/rpc')
+const api = new PulseAPI('https://a-chain-alpine.metalblockchain.org/ext/bc/<ALPINE_BLOCKCHAIN_ID>/rpc')
 const info = await api.getInfo()
 const block = await api.getBlock(info.last_irreversible_block_num)
 
@@ -40,7 +40,7 @@ const tx = Transaction.from({
   transaction_extensions: [],
 })
 
-const CHAIN_ID = '0d6f033e887fae475d641104b6e87762b6c869e87a101afeeb64d608ab376618'
+const CHAIN_ID = info.chain_id  // never hardcode: Alpine's chain_id changes on every re-genesis
 const sig = PrivateKey.from('PVT_K1_...').signDigest(tx.signingDigest(CHAIN_ID))
 const signed = SignedTransaction.from({ ...tx, signatures: [sig.toString()], context_free_data: [] })
 const packed = PackedTransaction.fromSigned(signed, 0)

@@ -4,7 +4,7 @@ You're synced as an observer. Goal: add producer config, register on-chain, star
 
 ## Step 1 — Add the producer config
 
-Drop `~/.metalgo/configs/chains/6v9NieZiX3e8eQz3CyJMtXB6YzV2RtnxcRyLAmSgFWWk5Qs6y.json`:
+Drop `~/.metalgo/configs/chains/<ALPINE_BLOCKCHAIN_ID>.json` (the file name must be the current blockchain ID exactly; metalgo reads it from `chain-config-dir`):
 
 ```json
 {
@@ -44,7 +44,7 @@ Push via `pulse-cli`, `pulsevm-js`, or whatever signer you trust.
 
 ## Step 3 — Confirm you're producing
 
-Wait ~2 minutes for Snowman to start picking you. With N=6 validators, expect ~17% of blocks.
+Wait ~2 minutes for Snowman to start picking you. Expect roughly 1/N of blocks for N current validators.
 
 ```bash
 pulse chain:info | jq '{head:.head_block_num, producer:.head_block_producer}'

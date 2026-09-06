@@ -24,7 +24,7 @@ Detailed walkthrough: `wiki/bp-setup/02-bootstrap.md`.
 
 - Ubuntu 24.04 LTS (Noble Numbat). Anything else is adventure — Debian mostly works (LLVM repo URLs need nudging); RHEL/Rocky needs `apt`→`dnf` rewrite.
 - root or `sudo` access.
-- 8 GB RAM, 40 GB free disk minimum (Boost alone is ~1 GB post-clone).
+- 8 GB RAM, 40 GB free disk minimum; building from source needs LLVM 22 (`LLVM_SYS_221_PREFIX=/usr/lib/llvm-22`) — the node is pure Rust since v0.7.0, no Boost/C++ toolchain.
 - Outbound internet for apt, GitHub, and crates.io.
 
 ## Verify after bootstrap

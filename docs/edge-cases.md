@@ -429,6 +429,16 @@ Grep surface confirmed 2026-04-15: 18+ call sites still on the old API in these 
 
 ---
 
+## 2026-09-09 — bootstrap.sh still installed LLVM 21; upstream needs LLVM 22 since 2026-07-16
+
+**Symptom:** `cargo check` on `main` (b68f8892) dies in `llvm-sys` with `No suitable version of LLVM was found system-wide or pointed`, even with `LLVM_SYS_211_PREFIX` set.
+
+**Cause:** upstream commit `3cfceccd` (2026-07-16, "upgrade to llvm 22") moved `wasmer-compiler-llvm` to `llvm-sys` 221; CI (`.github/workflows/build.yml`, `e2e.yml`) installs `llvm-22-dev libpolly-22-dev` and exports `LLVM_SYS_221_PREFIX=/usr/lib/llvm-22`. The skill text was updated on 2026-09-07 but `scripts/bootstrap.sh` kept `LLVM_VER=21` (and `PULSEVM_VER=v0.2.4`, `METALGO_VER=v1.13.5-tahoe`, `GO_VER=1.22.8`).
+
+**Fix:** `LLVM_VER=22` (the script derives `LLVM_SYS_221_PREFIX` from it), `PULSEVM_VER=v0.7.1`, `METALGO_VER=v1.13.5` (Fortuna stable, rpcchainvm 43 on both sides — same as the `.95` demo box), `GO_VER=1.23.9` (metalgo's go.mod). Rule going forward: before pinning, read `PLUGIN_VERSION` in pulsevm and `RPCChainVMProtocol` in metalgo `version/constants.go`, and the LLVM version from pulsevm's `build.yml` — the README lags CI (see the 2026-04-15 entry, same class).
+
+---
+
 ## Reserved for next occurrence
 
 When we hit something:

@@ -57,8 +57,8 @@ Consequences worth internalising:
 
 ## WASM runtime
 
-- **Engine:** `wasmer` 7.0.1 with the **LLVM compiler backend** (`Cargo.toml` pins `wasmer-compiler-llvm` and `wasmer-middlewares`).
-- **Why LLVM:** ahead-of-time compile + deterministic metering middleware. (This is why LLVM 18 is a hard system dependency per README.)
+- **Engine:** `wasmer` 7.2.0 (7.4.0 pending in #82) with the **LLVM compiler backend** (`Cargo.toml` pins `wasmer-compiler-llvm` and `wasmer-middlewares`).
+- **Why LLVM:** ahead-of-time compile + deterministic metering middleware. (This is why LLVM 22 is a hard system dependency per README.)
 - **Metering:** `wasmer-middlewares::Metering` counts instructions → objective CPU.
 - **Host bindings** live under `crates/pulsevm_core/src/chain/webassembly/`:
   - `db_*.rs` — primary i64 index ops (store/update/remove/find/next/previous/end/lowerbound/upperbound); secondary indices not yet exposed.
@@ -147,7 +147,7 @@ Runtime env vars:
 - `WS_BIND` — state-history WS address (default `0.0.0.0:9090`)
 - `RUST_LOG` — log level
 
-System deps: Ubuntu 22.04+, zstd, LLVM 18, libffi. Mac supported for dev only (needs `brew install zstd llvm@18 libffi`).
+System deps: Ubuntu 22.04+, zstd, LLVM 22, libffi. Mac supported for dev only (needs `brew install zstd llvm@22 libffi`).
 
 ## Boot / genesis
 

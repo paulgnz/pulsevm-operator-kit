@@ -40,13 +40,13 @@ tmux htop net-tools dnsutils iproute2
 
 **Verify:** `gcc --version` → `gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0`.
 
-### 2. LLVM 21
+### 2. LLVM 22
 
-PulseVM's WASM runtime is Wasmer's LLVM compiler backend. The `llvm-sys` Rust crate that binds LLVM expects the shared libraries at a specific major version — CI pins **LLVM 21** via `LLVM_SYS_211_PREFIX=/usr/lib/llvm-21`.
+PulseVM's WASM runtime is Wasmer's LLVM compiler backend. The `llvm-sys` Rust crate that binds LLVM expects the shared libraries at a specific major version — CI pins **LLVM 22** via `LLVM_SYS_221_PREFIX=/usr/lib/llvm-22`.
 
 > Note: the pulsevm README still says "LLVM 18." It's stale. See [edge-cases.md](../edge-cases.md).
 
-Installed via apt.llvm.org's signed repo. Drops `/etc/profile.d/pulsevm-llvm.sh` to export `LLVM_SYS_211_PREFIX` and prepend `/usr/lib/llvm-21/bin` to PATH for the whole system.
+Installed via apt.llvm.org's signed repo. Drops `/etc/profile.d/pulsevm-llvm.sh` to export `LLVM_SYS_221_PREFIX` and prepend `/usr/lib/llvm-22/bin` to PATH for the whole system.
 
 **Verify:** `clang-21 --version` prints a version starting with `21.`.
 
@@ -159,7 +159,7 @@ The last step writes `/opt/versions.txt` with every installed tool's version. Us
 The script adds three files under `/etc/profile.d/`:
 
 ```
-pulsevm-llvm.sh    — LLVM_SYS_211_PREFIX, PATH for clang-21
+pulsevm-llvm.sh    — LLVM_SYS_221_PREFIX, PATH for clang-21
 pulsevm-rust.sh    — $HOME/.cargo/bin on PATH
 pulsevm-go.sh      — /usr/local/go/bin, $HOME/go/bin, GOPATH
 pulsevm-paths.sh   — composite: /opt/bin, go, cargo, llvm — for login shells

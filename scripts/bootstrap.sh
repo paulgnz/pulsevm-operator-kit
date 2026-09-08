@@ -46,13 +46,13 @@
 set -euo pipefail
 
 # ---------- pinned versions --------------------------------------------------
-LLVM_VER=21
-GO_VER=1.22.8
+LLVM_VER=22                   # upstream moved 21→22 on 2026-07-16 (3cfceccd); llvm-sys 221
+GO_VER=1.23.9                 # metalgo v1.13.5 go.mod
 NODE_MAJOR=22
 PROTOC_VER=27.1
 RUST_CHANNEL=stable
-PULSEVM_VER=v0.2.4            # rpcchainvm v43
-METALGO_VER=v1.13.5-tahoe     # rpcchainvm v43 — MUST match pulsevm
+PULSEVM_VER=v0.7.1            # rpcchainvm v43 (PLUGIN_VERSION, crates/pulsevm_core/src/chain/config/mod.rs)
+METALGO_VER=v1.13.5           # Fortuna (stable); rpcchainvm v43 — MUST match pulsevm
 MNR_VER=v1.9.0
 VM_ID="rXcAFxZvio99epp6TzEwYfexCfPAbJuBTMsjUUoiT7PkVykNs"
 
@@ -223,7 +223,7 @@ cat <<EOF
   Profile:               $PROFILE
   Mode:                  $([ "$NON_INTERACTIVE" = "1" ] && echo "express (no prompts)" || echo "guided (will prompt)")
   Arch:                  $ARCH
-  Build toolchain:       $(yn $INSTALL_BUILD)   (LLVM 21, Rust+wasm32, Go, protoc, Boost)
+  Build toolchain:       $(yn $INSTALL_BUILD)   (LLVM ${LLVM_VER}, Rust+wasm32, Go, protoc, Boost)
   Node.js 22:            $(yn $INSTALL_NODE)
   Docker + compose:      $(yn $INSTALL_DOCKER)
   gh CLI:                $(yn $INSTALL_GH)
